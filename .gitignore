@@ -3,3 +3,4 @@ MAChatbot/
 *.json
 *.config
 *.list
+*.pkl

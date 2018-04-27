@@ -82,27 +82,30 @@ class EmoCrawl:
                 access_token = self.access_token,
                 access_token_secret = self.access_secret
              )
+            tweetList = []
 
              # this is where the fun actually starts :)
             for tweet in ts.search_tweets_iterable(tso):
-                #print( '@%s tweeted: %s' % ( tweet['user']['screen_name'], tweet['text'] ) )
-                self.tweettext.append(tweet['text']);
-
+                # print( '@%s tweeted: %s' % ( tweet['user']['screen_name'], tweet['text'] ) )
+                tweetList.append(tweet)
+            return tweetList
         except TwitterSearchException as e: # take care of all those ugly errors if there are some
             print(e)
+            return null
 
-        for twttxt in self.tweettext:
-            tokenizer = RegexpTokenizer(r'\w+')
-            #tokens = nltk.word_tokenize(twttxt)
-            tokens = tokenizer.tokenize(twttxt)
-            tags = nltk.pos_tag(tokens)
-            for word, pos in tags:
-                if pos in ['JJ']: # feel free to add any other noun tags
-                    self.adjectives.append(word)
-            for word, pos in tags:
-                if pos in ['NN']: # feel free to add any other noun tags
-                    self.nouns.append(word)
-        adjHist = Counter(self.adjectives)
-        print "Histogram of Adjectives : " + str(adjHist)
-        nounHist = Counter(self.nouns)
-        print "Histogram of Nouns : " + str(nounHist)
+
+        # for twttxt in self.tweettext:
+        #     tokenizer = RegexpTokenizer(r'\w+')
+        #     #tokens = nltk.word_tokenize(twttxt)
+        #     tokens = tokenizer.tokenize(twttxt)
+        #     tags = nltk.pos_tag(tokens)
+        #     for word, pos in tags:
+        #         if pos in ['JJ']: # feel free to add any other noun tags
+        #             self.adjectives.append(word)
+        #     for word, pos in tags:
+        #         if pos in ['NN']: # feel free to add any other noun tags
+        #             self.nouns.append(word)
+        # adjHist = Counter(self.adjectives)
+        # print "Histogram of Adjectives : " + str(adjHist)
+        # nounHist = Counter(self.nouns)
+        # print "Histogram of Nouns : " + str(nounHist)

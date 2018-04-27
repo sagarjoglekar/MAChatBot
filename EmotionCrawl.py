@@ -1,6 +1,7 @@
 import sys
 import twitterSearchV0 as twitterSearch
 from optparse import OptionParser
+import pickle as pkl
 
 keywords = []
 geo = ''
@@ -23,6 +24,8 @@ if __name__ == "__main__":
             geo = str((sys.argv[3]))
             rad = float(sys.argv[4])
             keywords = str(sys.argv[5])
+
+            print geo , rad , keywords
         else:
             keywords = str(sys.argv[2])
 
@@ -38,4 +41,6 @@ if __name__ == "__main__":
 
     #search.makePost();
 
-    search.search()
+    tweets = search.search()
+    pkl.dump(tweets,open("output.pkl",'wb'))
+
