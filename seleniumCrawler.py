@@ -167,7 +167,7 @@ class SeleniumCrawler:
         for _ in range(pages):
             body.send_keys(Keys.PAGE_DOWN)
             print "Scrolling: %d" %_
-            time.sleep(2)
+            time.sleep(0.5)
 
         try:
             stream = body.find_element_by_class_name('stream')
@@ -240,7 +240,7 @@ class SeleniumCrawler:
 
 
             self.browser.get(url)
-            time.sleep(0.5)
+            time.sleep(0.2)
             try:
                 body = self.browser.find_element_by_tag_name('body')
             except NoSuchElementException:
@@ -341,9 +341,9 @@ if __name__ == "__main__":
 
 
     # data = searchObj.getUserInfo(['sagarjoglekar','avraman'])
-    data = searchObj.crawlTweetRepliesByURL("https://twitter.com/elonmusk/status/989198118666162176",10)
+    data = searchObj.crawlTweetRepliesByURL("https://twitter.com/elonmusk/status/989198118666162176",100)
     print len(data.keys())
-    # with open('result2.json', 'w') as fp:
-    #     json.dump(crawledData, fp)
+    with open('Elon2.json', 'w') as fp:
+        json.dump(data, fp)
     searchObj.killBrowser()
     # display.stop()
