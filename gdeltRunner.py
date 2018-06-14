@@ -1,18 +1,38 @@
-import gdelt
+import requests as rq
 import json
-import platform
-import multiprocessing
+import datetime as dt
+import Scraper
 
 
-print (platform.platform())
+class gdeltNewsCrawler():
 
-print (multiprocessing.cpu_count())
+	apiURLdoc = "https://api.gdeltproject.org/api/v2/doc/doc?query=" #api for document queries
+	apiURLgeo = "https://api.gdeltproject.org/api/v2/geo/geo?query=" #api for geo queries 
+	recordFrag = "maxrecords=" 
+	maxRecords = 250 #Number of records per query
+	duration = 15 #number of days before today to look for
+	sourcecountry = "uk" #country to get articles from
 
-# Version 2 queries
-gd2 = gdelt.gdelt(version=2)
+	startDate = None
+	endDate = None
+	def __init__(self,delta=None):
+		if delta!=None:
+			self.duration = delta
+		
+		self.endDate = dt.datetime.strftime(dt.datetime.today(),'%Y%m%d%H%M%S')
+		self.startDate = dt.datetime.strftime((dt.datetime.today() - dt.timedelta(days=self.duration)),'%Y%m%d%H%M%S')
 
-# Single 15 minute interval pull, output to json format with mentions table
-results = gd2.Search('2018 June 1',table='mentions',output='json')
-print(len(results))
-print results
-results.json()
+	def printDates(self):
+		print "crawling for: %s to %s"%(self.startDate,self.endDate)
+
+
+
+def test():
+	crawler = gdeltNewsCrawler()
+	crawler.printDates()
+
+
+if __name__ == '__main__':
+	test()
+			
+
