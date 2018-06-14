@@ -4,6 +4,16 @@ import datetime as dt
 import Scraper
 import urllib
 
+from flask import Flask, render_template, request
+from flask_cors import CORS
+
+app = Flask(__name__, static_folder='../static', template_folder='../templates')
+
+def start_server():
+    global app
+    CORS(app)
+
+
 class gdeltNewsCrawler():
 
 	apiURLdoc = "https://api.gdeltproject.org/api/v2/doc/doc?query=" #api for document queries
@@ -72,10 +82,25 @@ class gdeltNewsCrawler():
 					json.dump(r.json() , f)
 
 
+@app.route("/getnews", methods=['POST'])
+def getNews():
+    """Respond to incoming calls with a simple text message."""
+    print request.form
+    keywords = request.form.get('keywords').split(",")
+    print len(keywords)
+    language = request.form.get('language')
+    country = request.form.get('country')
+    days = request.form.get('days')
 
+    crawler = gdeltNewsCrawler(days,'results/')
+    crawler.doQueries(keywords,country,language)
+    return "Success"
+    
 def test():
 	crawler = gdeltNewsCrawler(100)
 	crawler.doQueries(["nigel Farage",'Donald Trump'],'uk','english')
+
+
 
 
 if __name__ == '__main__':
