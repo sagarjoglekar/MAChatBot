@@ -1,22 +1,30 @@
 import requests as rq
 import json
 import datetime as dt
-import Scraper
+from Scraper import Scraper
 import urllib
+import sys
 from mongoengine import *
-
+sys.path.insert(0,'../')
+from storage.data_models import *
 from flask import Flask, render_template, request
 from flask_cors import CORS
 
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
 
+def connect_to_mongo(IP=None, Port=None):
+	if IP==None and Port == None:
+		IP = '127.0.0.1'
+		Port = 27017
+
+	print('I am connecting to MongoDB ')
+	connect('MA_NewsDB', host=IP, port=Port)
+
+
 def start_server():
     global app
     CORS(app)
-
-def connect_to_mongo():
-    print('I am connecting to MongoDB ')
-    connect('mongoengineMarchTech', host='127.0.0.1', port=27017)
+    connect_to_mongo()
 
 
 class gdeltNewsCrawler():
@@ -32,7 +40,9 @@ class gdeltNewsCrawler():
 
 	startDate = []
 	endDate = []
-	def __init__(self, delta=None , savePath = '.'):
+	def __init__(self, maxRecords = None , delta=None , savePath = '.'):
+		if maxRecords!=None:
+			self.params['maxrecords'] = maxRecords
 		self.savePath = savePath
 		if delta!=None:
 			if delta < self.duration:
@@ -56,6 +66,23 @@ class gdeltNewsCrawler():
 	def printDates(self):
 		for i in range(len(self.startDate)):
 			print "crawling for: %s to %s"%(self.startDate[i],self.endDate[i])
+
+	def writeNewstoDb(self,json):
+		articles = json['articles']
+		for art in articles:
+			text = ''
+			try:
+				print art['url']
+				text = self.scrapeNewsText(art['url'])
+			except:
+				print "scraping failed!! Moving on"
+			news = News(domain=art['domain'] , language=art['language'] , title = art['title'] , url = art['url'] , country = art['sourcecountry'] , imageUrl = art['socialimage'] , date = art['seendate'] , text = text)
+			news.save()
+
+	def scrapeNewsText(self,url):
+		scraper =  Scraper()
+		text = scraper.scrape(url)
+		return ' '.join(text.split())
 
 	def doQueries(self,topicList,sourcecountry,sourcelang=None):
 		if len(topicList) > 1:
@@ -83,8 +110,9 @@ class gdeltNewsCrawler():
 			print r.status_code
 			if r.status_code == 200:
 				print "Writing Json!"
-				with open(name , 'w' ) as f:
-					json.dump(r.json() , f)
+				self.writeNewstoDb(r.json())
+				# with open(name , 'w' ) as f:
+				# 	json.dump(r.json() , f)
 
 
 @app.route("/getnews", methods=['POST'])
@@ -96,13 +124,14 @@ def getNews():
     language = request.form.get('language')
     country = request.form.get('country')
     days = request.form.get('days')
+    records = request.form.get('records')
 
-    crawler = gdeltNewsCrawler(days,'results/')
+    crawler = gdeltNewsCrawler(maxRecords = records, delta = days, savePath ='../results/')
     crawler.doQueries(keywords,country,language)
     return "Success"
     
 def test():
-	crawler = gdeltNewsCrawler(100 , 'results/')
+	crawler = gdeltNewsCrawler(maxRecords = 10 , delta = 100 , savePath = 'results/')
 	crawler.doQueries(["nigel Farage",'Donald Trump'],'uk','english')
 
 
