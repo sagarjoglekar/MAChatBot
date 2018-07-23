@@ -2,10 +2,6 @@ from mongoengine import *
 import json
 from bson import ObjectId
 
-def connect_to_mongo():
-    print('I am connecting to MongoDB ')
-    connect('mongoengineMarchTech', host='127.0.0.1', port=27017)
-
 
 
 class JSONEncoder(json.JSONEncoder):

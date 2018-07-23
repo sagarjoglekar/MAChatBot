@@ -2,7 +2,7 @@
 from endpoints.gdelt import *
 from endpoints.gdelt import app
 
-# connect_to_mongo()
+connect_to_mongo()
 start_server()
 
 print 'Starting to run the server'

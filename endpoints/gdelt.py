@@ -3,6 +3,7 @@ import json
 import datetime as dt
 import Scraper
 import urllib
+from mongoengine import *
 
 from flask import Flask, render_template, request
 from flask_cors import CORS
@@ -12,6 +13,10 @@ app = Flask(__name__, static_folder='../static', template_folder='../templates')
 def start_server():
     global app
     CORS(app)
+
+def connect_to_mongo():
+    print('I am connecting to MongoDB ')
+    connect('mongoengineMarchTech', host='127.0.0.1', port=27017)
 
 
 class gdeltNewsCrawler():
@@ -97,7 +102,7 @@ def getNews():
     return "Success"
     
 def test():
-	crawler = gdeltNewsCrawler(100)
+	crawler = gdeltNewsCrawler(100 , 'results/')
 	crawler.doQueries(["nigel Farage",'Donald Trump'],'uk','english')
 
 
