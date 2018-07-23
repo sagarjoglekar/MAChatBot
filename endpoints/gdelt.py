@@ -15,7 +15,8 @@ app = Flask(__name__, static_folder='../static', template_folder='../templates')
 def connect_to_mongo(IP=None, Port=None):
 	if IP==None and Port == None:
 		IP = '127.0.0.1'
-		Port = 27017
+		#Forwarded port to Babbage mongo instance
+		Port = 30100
 
 	print('I am connecting to MongoDB ')
 	connect('MA_NewsDB', host=IP, port=Port)
