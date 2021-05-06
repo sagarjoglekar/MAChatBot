@@ -32,7 +32,7 @@ docutils==0.14
 enum34==1.1.6
 Fiona==1.7.11.post2
 Flask==0.12.2
-Flask-Cors==3.0.6
+Flask-Cors==3.0.9
 ftfy==4.4.3
 funcsigs==1.0.2
 futures==3.2.0
